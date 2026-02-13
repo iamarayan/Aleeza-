@@ -153,7 +153,21 @@
                     drops[i]++;
                 });
             }, 50);
+        
+}
+// --- Music Auto-Pause Logic ---
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        // Agar user home screen par gaya ya tab badla toh music rok do
+        audio.pause();
+    } else {
+        // Agar user wapas aaya aur questions start ho chuke hain toh play karo
+        if (idx > 0) {
+            audio.play().catch(() => {});
         }
+    }
+});
+
     </script>
 </body>
 </html>
