@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Infinity | Aleeza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #ff004c; --bg: #050505; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: manipulation; }
+        #main-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .wrapper { position: relative; z-index: 10; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 20px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { font-family: 'Dancing Script', cursive; color: var(--accent); font-size: 2.8rem; margin-bottom: 15px; }
+        p { font-size: 1.1rem; min-height: 110px; margin-bottom: 25px; line-height: 1.6; }
+        .btn-box { display: flex; justify-content: center; gap: 30px; position: relative; height: 60px; }
+        button { padding: 14px 35px; font-size: 1.1rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .yes-btn { background: var(--accent); color: white; box-shadow: 0 8px 20px rgba(255, 0, 76, 0.4); z-index: 1000; }
+        .no-btn { background: #222; color: #777; position: absolute; z-index: 900; }
+        
+        textarea { width: 100%; height: 120px; border-radius: 15px; padding: 15px; border: 1px solid var(--accent); background: rgba(255,255,255,0.05); color: white; font-family: inherit; margin-bottom: 20px; resize: none; outline: none; }
+        
+        #message-stage, #final-stage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .final-text { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: white; text-shadow: 0 0 30px var(--accent); }
+        .heart-burst { position: absolute; pointer-events: none; font-size: 30px; animation: burst 2s ease-out forwards; }
+        @keyframes burst { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <canvas id="main-canvas"></canvas>
+
+    <div class="wrapper" id="ui-layer">
+        <div class="glass-card">
+            <h2 id="title">Dearest, Aleeza...</h2>
+            <p id="question">Before we begin, may I share a few thoughts that have been living in my heart for you?</p>
+            <div class="btn-box">
+                <button class="yes-btn" id="yesBtn">Yes</button>
+                <button class="no-btn" id="noBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="message-stage">
+        <div class="glass-card">
+            <h2>A Message for Me?</h2>
+            <p style="min-height: auto; margin-bottom: 15px;">Write anything you want to say to Arayan...</p>
+            <form id="aleezaForm" action="https://formspree.io/f/maqdevnz" method="POST" style="width: 100%;">
+                <textarea name="message" placeholder="Type your heart out..." required></textarea>
+                <button type="submit" class="yes-btn" style="width: 100%;">Send to Arayan ❤️</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="final-stage">
+        <h1 class="final-text">I am yours forever, Aleeza. ❤️</h1>
+        <p style="margin-top:20px; color: rgba(255,255,255,0.6);">Always Your Arayan</p>
+    </div>
+
+    <audio id="zaalima" loop>
+        <source src="zaalima.m4a" type="audio/mp4">
+        <source src="zaalima.m4a" type="audio/mp4">
+    </audio>
+
+    <script>
+        const questions = [
+            "In a world of temporary moments, you are my forever. Will you stay? ❤️",
+            "If every heartbeat had a name, mine would only whisper 'Aleeza'.",
+            "Your happiness is the only light I need in my darkest days.",
+            "No matter how much we fight, I promise to never let go.",
+            "Aleeza, you aren't just my love; you are my peace.",
+            "I want to wake up every morning knowing you are mine.",
+            "Will you hold my hand through every storm and sunshine?",
+            "Every beat of my heart whispers your name. ❤️",
+            "Abhi na jao chhod kar... ke dil abhi bhara nahi. ❤️",
+            "Final Question: Will you belong to me forever?"
+        ];
+        let idx = 0;
+        const qElement = document.getElementById('question');
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const audio = document.getElementById('zaalima');
+
+        function moveNo() {
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
+        noBtn.addEventListener('mouseover', moveNo);
+
+        yesBtn.addEventListener('click', () => {
+            if(idx === 0) audio.play().catch(() => {});
+            if (idx < questions.length) {
+                qElement.innerText = questions[idx];
+                idx++;
+            } else {
+                document.getElementById('ui-layer').style.display = 'none';
+                document.getElementById('message-stage').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('aleezaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            }).then(() => {
+                document.getElementById('message-stage').style.display = 'none';
+                document.getElementById('final-stage').style.display = 'flex';
+                setInterval(createHeartBurst, 400);
+            });
+        });
+
+        const canvas = document.getElementById('main-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(5, 5, 5, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "15px monospace"; ctx.fillStyle = "#222";
+            drops.forEach((y, i) => {
+                ctx.fillText("01", i * 20, y * 20);
+                if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(draw, 50);
+
+        function createHeartBurst() {
+            for(let i=0; i<15; i++) {
+                const h = document.createElement('div');
+                h.innerHTML = '❤️'; h.className = 'heart-burst';
+                h.style.left = '50%'; h.style.top = '50%';
+                h.style.setProperty('--tx', (Math.random() - 0.5) * 800 + 'px');
+                h.style.setProperty('--ty', (Math.random() - 0.5) * 800 + 'px');
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 2000);
+            }
+        }
+    </script>
+</body>
+</html>
+  
