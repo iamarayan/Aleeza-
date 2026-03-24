@@ -2,172 +2,230 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Infinity | Aleeza</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Aleeza ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
-        :root { --accent: #ff004c; --bg: #050505; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { width: 100%; height: 100%; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; }
-        
-        /* Password Screen Style */
-        #lock-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: flex;
-            justify-content: center; align-items: center; text-align: center;
+        /* Base Styling & Sunset Animation */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        .lock-card { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--accent); width: 85%; max-width: 350px; }
-        .lock-card h3 { font-family: 'Dancing Script', cursive; font-size: 2rem; margin-bottom: 20px; color: var(--accent); }
-        .lock-card input { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; text-align: center; font-size: 1.1rem; margin-bottom: 15px; }
-        
-        /* Rest of the Styles */
-        #main-content { display: none; }
-        #main-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        .wrapper { position: relative; z-index: 10; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 20px; border-radius: 25px; width: 90%; max-width: 400px; text-align: center; }
-        h2 { font-family: 'Dancing Script', cursive; color: var(--accent); font-size: 2.8rem; margin-bottom: 15px; }
-        p { font-size: 1.1rem; min-height: 110px; margin-bottom: 25px; line-height: 1.6; }
-        .btn-box { display: flex; justify-content: center; gap: 30px; position: relative; height: 60px; }
-        button { padding: 14px 35px; font-size: 1.1rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; }
-        .yes-btn { background: var(--accent); color: white; box-shadow: 0 8px 20px rgba(255, 0, 76, 0.4); }
-        .no-btn { background: #222; color: #777; position: absolute; }
-        textarea { width: 100%; height: 120px; border-radius: 15px; padding: 15px; border: 1px solid var(--accent); background: rgba(255,255,255,0.05); color: white; margin-bottom: 20px; resize: none; outline: none; }
-        #message-stage, #final-stage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .final-text { font-family: 'Dancing Script', cursive; font-size: 3.5rem; text-shadow: 0 0 30px var(--accent); }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Animated Sunset Background */
+            background: linear-gradient(-45deg, #ff7e5f, #feb47b, #ff9966, #ff5e62);
+            background-size: 400% 400%;
+            animation: sunsetGlow 15s ease infinite;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes sunsetGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            transition: opacity 1s ease;
+        }
+
+        .magic-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ff7e5f;
+            background: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .magic-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Glassmorphism Card (Main Content) */
+        #main-content {
+            display: none; /* Hidden until magic button is clicked */
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            padding: 20px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        p {
+            font-weight: 300;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Proposal Buttons */
+        .btn-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 50px;
+        }
+
+        .action-btn {
+            padding: 10px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: white;
+            color: #ff5e62;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            position: relative; /* Will become absolute via JS */
+        }
     </style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <div class="lock-card">
-            <h3>Only for You...</h3>
-            <input type="password" id="passInput" placeholder="Enter Magic Word">
-            <button class="yes-btn" onclick="checkPass()" style="width: 100%;">Unlock Heart</button>
-            <p id="error" style="color: red; font-size: 0.8rem; min-height: auto; margin-top: 10px; display: none;">Wrong password! Try again.</p>
-        </div>
-    </div>
-
-    <div id="main-content">
-        <canvas id="main-canvas"></canvas>
-        <div class="wrapper" id="ui-layer">
-            <div class="glass-card">
-                <h2>Dearest Aleeza...</h2>
-                <p id="question">Before we begin, may I share a few thoughts that have been living in my heart for you?</p>
-                <div class="btn-box">
-                    <button class="yes-btn" id="yesBtn">Yes</button>
-                    <button class="no-btn" id="noBtn">No</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="message-stage">
-            <div class="glass-card">
-                <h2>A Message for Me?</h2>
-                <p style="min-height: auto; margin-bottom: 15px;">Write anything you want to say to Arayan...</p>
-                <form id="aleezaForm" action="https://formspree.io/f/maqdevnz" method="POST" style="width: 100%;">
-                    <textarea name="message" placeholder="Type your heart out..." required></textarea>
-                    <button type="submit" class="yes-btn" style="width: 100%;">Send to Arayan ❤️</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="final-stage">
-            <h1 class="final-text">I am yours forever, Aleeza. ❤️</h1>
-            <p style="margin-top:20px; color: rgba(255,255,255,0.6);">Always Your Arayan</p>
-        </div>
-    </div>
-
-    <audio id="zaalima" loop>
+    <audio id="bg-music" loop>
         <source src="zaalima.m4a" type="audio/mp4">
     </audio>
 
+    <div id="intro-screen">
+        <h2 style="margin-bottom: 20px; font-weight: 300;">Ready for something special?</h2>
+        <button class="magic-btn" onclick="startExperience()">Tap to Feel the Magic ✨</button>
+    </div>
+
+    <div id="main-content">
+        <div class="glass-card" id="proposal-card">
+            <h1>Hey Aleeza, ❤️</h1>
+            <p>
+                The love I have for you can’t be defined in just three letters. I only have a small skill in me, so I thought I’d express my feelings for you in the language I like.<br><br>
+                London ki sab se best future lawyer, kya tum is future software engineer ki life ko hamesha ke liye 'bug-free' karna pasand karogi?
+            </p>
+            <div class="btn-container">
+                <button class="action-btn btn-yes" onclick="acceptProposal()">Yes!</button>
+                <button class="action-btn btn-no" id="noBtn">No</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // PASSWORD CONFIGURATION
-        const MAGIC_WORD = "aleeza123"; // Aap ise apni marzi se badal sakte hain
-
-        function checkPass() {
-            const input = document.getElementById('passInput').value.toLowerCase();
-            if(input === MAGIC_WORD) {
-                document.getElementById('lock-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                startMatrix();
-            } else {
-                document.getElementById('error').style.display = 'block';
-            }
+        // Start Experience: Play music & show main content
+        function startExperience() {
+            // Play Zaalima
+            document.getElementById('bg-music').play();
+            
+            // Hide intro screen
+            const intro = document.getElementById('intro-screen');
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                
+                // Show main content
+                const mainContent = document.getElementById('main-content');
+                mainContent.style.display = 'flex';
+                // Simple fade in effect
+                mainContent.style.opacity = '0';
+                setTimeout(() => { mainContent.style.opacity = '1'; }, 50);
+            }, 1000);
         }
 
-        // --- Original Website Logic ---
-        const questions = [
-            "In a world of temporary moments, you are my forever. Will you stay? ❤️",
-            "If every heartbeat had a name, mine would only whisper 'Aleeza'.",
-            "Your happiness is the only light I need in my darkest days.",
-            "Aleeza, you aren't just my love; you are my peace.",
-            "Final Question: Will you belong to me forever?"
-        ];
-        let idx = 0;
-        const qElement = document.getElementById('question');
+        // Runaway "No" Button Logic
         const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
-        const audio = document.getElementById('zaalima');
 
-        function moveNo() {
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 50);
+        function moveButton() {
+            // Screen boundaries so button doesn't go outside
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
+            
             noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px'; noBtn.style.top = y + 'px';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
         }
-        noBtn.addEventListener('mouseover', moveNo);
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
 
-        yesBtn.addEventListener('click', () => {
-            if(idx === 0) audio.play().catch(() => {});
-            if (idx < questions.length) {
-                qElement.innerText = questions[idx];
-                idx++;
-            } else {
-                document.getElementById('ui-layer').style.display = 'none';
-                document.getElementById('message-stage').style.display = 'flex';
-            }
+        // Trigger on hover (PC) and touch (Mobile)
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevents clicking on mobile
+            moveButton();
         });
 
-        document.getElementById('aleezaForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json' }})
-            .then(() => {
-                document.getElementById('message-stage').style.display = 'none';
-                document.getElementById('final-stage').style.display = 'flex';
+        // Yes Button Logic (Confetti + Success Message)
+        function acceptProposal() {
+            // Fire Confetti
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#ff0000', '#ffffff', '#ff7e5f']
             });
-        });
 
-        function startMatrix() {
-            const canvas = document.getElementById('main-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            const drops = Array(Math.floor(canvas.width / 20)).fill(1);
-            setInterval(() => {
-                ctx.fillStyle = "rgba(5, 5, 5, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.font = "15px monospace"; ctx.fillStyle = "#222";
-                drops.forEach((y, i) => {
-                    ctx.fillText("01", i * 20, y * 20);
-                    if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                });
-            }, 50);
-        
-}
-// --- Music Auto-Pause Logic ---
-document.addEventListener("visibilitychange", function() {
-    if (document.hidden) {
-        // Agar user home screen par gaya ya tab badla toh music rok do
-        audio.pause();
-    } else {
-        // Agar user wapas aaya aur questions start ho chuke hain toh play karo
-        if (idx > 0) {
-            audio.play().catch(() => {});
+            // Change Card Content
+            const card = document.getElementById('proposal-card');
+            card.innerHTML = `
+                <h1 style="font-size: 2.5rem; margin-bottom: 10px;">I Knew It! 🎉</h1>
+                <p style="font-size: 1.2rem; font-weight: 400;">
+                    See you in London (hopefully Hampstead)! 🇬🇧❤️<br>
+                    <span style="font-size: 0.9rem; opacity: 0.8; display: block; margin-top: 15px;">- Your Future Product Engineer</span>
+                </p>
+            `;
         }
-    }
-});
-
     </script>
 </body>
 </html>
